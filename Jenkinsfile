@@ -1,11 +1,28 @@
-node{
-   stage('SCM checkout'){
+pipeline {
+   agent any
+         stages {
+             stage ('compile stage') {
+                 
+                 steps {
+                     withMaven(maven: 'maven-3.5.4') {
+                sh 'mvn clean compile'
+                     }
+                 }           
+             }  
+      stage ('Testing stage') {
+          steps {  
+              withMaven(maven: 'maven-3.5.4') {
+                          sh 'mvn test'
+              }
+          }   
+      } 
       
-     git 'https://github.com/tarugusatish1/maven'
-   }
-   stage('compile-package') {
-    def mvnHOME =     tool name: 'maven', type: 'maven'
-      sh "${mvnHOME}/bin/mvn package"
-     }
-     
+      stage ('Deployment stage ') {
+          steps {
+            withMaven(maven: 'maven-3.5.4') {
+                sh 'mvn deploy'
+              }
+          }
+      }
+   }     
 }   
